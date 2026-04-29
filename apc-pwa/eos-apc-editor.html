@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="color-scheme" content="dark">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="APC EOS">
+<meta name="theme-color" content="#f0a030">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="apple-touch-startup-image" href="icon-512.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<title>APC EOS</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+–orange: #f0a030;
+–green:  #30e878;
+–blue:   #30b8f0;
+–red:    #f03020;
+–bg:     #0e0e12;
+–surf:   #111118;
+–panel:  #18181f;
+–border: #2a2a3a;
+–text:   #eeeef8;
+–dim:    #555566;
+–safe-bottom: env(safe-area-inset-bottom, 0px);
+–safe-top:    env(safe-area-inset-top, 0px);
+}
+
+html, body {
+background: var(–bg) !important;
+color: var(–text) !important;
+font-family: ‘Inter’, system-ui, sans-serif !important;
+height: 100%; width: 100%;
+overflow: hidden;
+color-scheme: dark;
+-webkit-tap-highlight-color: transparent;
+-webkit-text-size-adjust: none;
+}
+
+/* ── APP SHELL ──────────────────────────────────── */
+#app {
+display: flex;
+flex-direction: column;
+height: 100%;
+padding-top: var(–safe-top);
+padding-bottom: calc(var(–safe-bottom) + 56px);
+}
+
+/* ── STATUS BAR ──────────────────────────────────── */
+#sbar {
+background: var(–surf) !important;
+border-bottom: 2px solid var(–orange);
+padding: 6px 12px;
+display: flex;
+align-items: center;
+gap: 6px;
+flex-wrap: nowrap;
+overflow-x: auto;
+flex-shrink: 0;
+-webkit-overflow-scrolling: touch;
+}
+#sbar::-webkit-scrollbar { display: none; }
+
+.pill {
+display: flex; align-items: center; gap: 5px;
+background: var(–bg) !important;
+border: 1px solid var(–border);
+border-radius: 20px;
+padding: 3px 9px;
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 11px; white-space: nowrap;
+flex-shrink: 0;
+}
+.plbl { color: var(–dim); font-size: 9px; text-transform: uppercase; letter-spacing: 1px; }
+.pval { color: var(–text); font-weight: 600; }
+
+.dot { width: 7px; height: 7px; border-radius: 50%; background: #333; flex-shrink: 0; }
+.dot.ok   { background: var(–green); box-shadow: 0 0 5px var(–green); }
+.dot.err  { background: var(–red);   box-shadow: 0 0 5px var(–red);   animation: blink 1s infinite; }
+.dot.warn { background: var(–orange);box-shadow: 0 0 5px var(–orange);}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+.chips { display: flex; gap: 3px; }
+.chip {
+padding: 1px 6px; border-radius: 10px;
+font-size: 10px; font-weight: 700;
+text-transform: uppercase; letter-spacing: 1px;
+opacity: .3; transition: opacity .2s;
+}
+.chip.on { opacity: 1; }
+.chip.sub   { background: #1a3a2a; color: var(–green); }
+.chip.ml    { background: #1a2a3a; color: var(–blue); }
+.chip.color { background: #3a1a3a; color: #e070f0; }
+
+.sbar-btns { display: flex; gap: 5px; margin-left: auto; flex-shrink: 0; }
+.hbtn {
+font-family: ‘Inter’, sans-serif;
+font-size: 11px; font-weight: 700;
+letter-spacing: 1px; text-transform: uppercase;
+padding: 5px 10px; border-radius: 4px; border: none;
+cursor: pointer; transition: all .12s; white-space: nowrap;
+}
+.hbtn.sec { background: transparent; color: var(–blue); border: 1px solid var(–blue); }
+.hbtn.pri { background: var(–orange); color: #000; }
+.hbtn.grn { background: transparent; color: var(–green); border: 1px solid var(–green); }
+
+/* ── PAGES ───────────────────────────────────────── */
+#pages { flex: 1; overflow: hidden; position: relative; }
+
+.page {
+position: absolute; inset: 0;
+overflow-y: auto;
+-webkit-overflow-scrolling: touch;
+display: none;
+padding: 10px;
+}
+.page.active { display: block; }
+
+/* ── BOTTOM TAB BAR ──────────────────────────────── */
+#tabbar {
+position: fixed;
+bottom: 0; left: 0; right: 0;
+height: calc(56px + var(–safe-bottom));
+padding-bottom: var(–safe-bottom);
+background: var(–surf) !important;
+border-top: 1px solid var(–border);
+display: flex;
+align-items: stretch;
+z-index: 300;
+}
+
+.tab {
+flex: 1;
+display: flex; flex-direction: column;
+align-items: center; justify-content: center;
+gap: 3px;
+cursor: pointer;
+transition: background .12s;
+border: none; background: transparent;
+padding: 6px 4px;
+-webkit-tap-highlight-color: transparent;
+}
+.tab:active { background: #1a1a24; }
+.tab.active .tab-icon { color: var(–orange); }
+.tab.active .tab-lbl  { color: var(–orange); }
+
+.tab-icon {
+font-size: 20px;
+color: var(–dim);
+transition: color .12s;
+line-height: 1;
+}
+.tab-lbl {
+font-family: ‘Inter’, sans-serif;
+font-size: 10px; font-weight: 600;
+color: var(–dim);
+letter-spacing: 0.5px;
+text-transform: uppercase;
+transition: color .12s;
+}
+
+/* ── SECTION CARDS ───────────────────────────────── */
+.sec {
+background: var(–panel) !important;
+border: 1px solid var(–border);
+border-radius: 6px;
+padding: 10px 12px;
+margin-bottom: 10px;
+}
+.stitle {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 9px; letter-spacing: 2px;
+color: var(–orange); text-transform: uppercase;
+margin-bottom: 8px; padding-bottom: 4px;
+border-bottom: 1px solid var(–border);
+}
+
+/* ── GRID PAGE ───────────────────────────────────── */
+.gouter { display: flex; flex-direction: column; gap: 2px; }
+.gmain  { display: flex; flex-direction: column; gap: 2px; }
+.grow   { display: flex; gap: 2px; }
+
+.gbtn {
+flex: 1; height: 52px;
+border-radius: 5px; border: 1px solid #2a2a38;
+cursor: pointer; position: relative;
+display: flex; flex-direction: column;
+align-items: center; justify-content: center;
+background: #14141c !important;
+transition: transform .06s, border-color .06s;
+overflow: hidden;
+touch-action: manipulation;
+user-select: none;
+-webkit-user-select: none;
+}
+.gbtn:active { transform: scale(0.95); background: #1e1e2a !important; }
+.gbtn.sel   { border-color: var(–orange) !important; box-shadow: 0 0 0 2px var(–orange); z-index: 3; }
+.gbtn.fired { border-color: #fff !important; background: #ffffff22 !important; }
+
+.gnote {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 7px; color: #333;
+position: absolute; top: 2px; left: 3px;
+}
+.glabel {
+font-family: ‘Inter’, sans-serif;
+font-size: 11px; font-weight: 700;
+color: #fff !important;
+text-align: center; line-height: 1.15;
+padding: 0 4px;
+word-break: break-word;
+text-shadow: 0 1px 4px rgba(0,0,0,1), 0 0 8px rgba(0,0,0,.8);
+}
+.gdot { width: 5px; height: 5px; border-radius: 50%; position: absolute; bottom: 2px; right: 3px; }
+
+.rcol { display: flex; gap: 2px; }
+.rbtn {
+flex: 1; height: 38px;
+border-radius: 4px; border: 1px solid #2a3a2a;
+background: #121c12 !important; cursor: pointer;
+display: flex; align-items: center; justify-content: center;
+touch-action: manipulation; user-select: none;
+transition: transform .06s;
+}
+.rbtn:active { transform: scale(0.95); }
+.rbtn.sel   { border-color: var(–blue) !important; box-shadow: 0 0 0 2px var(–blue); }
+.rbtn.fired { border-color: #fff !important; background: #ffffff22 !important; }
+.rbtn .glabel { color: #70ff90 !important; font-size: 10px; }
+.rbtn .gnote  { display: none; }
+
+.trow { display: flex; gap: 2px; margin-top: 2px; }
+.tbtn {
+flex: 1; height: 20px; border-radius: 2px;
+border: 1px solid #1e1e2a; background: #0e0e14 !important;
+display: flex; align-items: center; justify-content: center;
+}
+.tbtn span { font-family: ‘JetBrains Mono’, monospace; font-size: 7px; color: #333; }
+
+/* Fire toast */
+#fire-toast {
+position: fixed; top: calc(var(–safe-top) + 60px); left: 50%; transform: translateX(-50%);
+background: var(–green); color: #000;
+font-family: ‘JetBrains Mono’, monospace; font-size: 11px; font-weight: 700;
+padding: 6px 16px; border-radius: 20px;
+opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 500;
+white-space: nowrap; max-width: 90vw; overflow: hidden; text-overflow: ellipsis;
+}
+#fire-toast.show { opacity: 1; }
+#fire-toast.err  { background: var(–red); color: #fff; }
+
+/* ── EDITOR PANEL (slide-up sheet on iPad) ───────── */
+#editor-sheet {
+position: fixed;
+left: 0; right: 0;
+bottom: calc(56px + var(–safe-bottom));
+height: 0;
+background: var(–panel);
+border-top: 2px solid var(–orange);
+border-radius: 16px 16px 0 0;
+overflow: hidden;
+transition: height .3s cubic-bezier(.4,0,.2,1);
+z-index: 400;
+display: flex; flex-direction: column;
+}
+#editor-sheet.open { height: 55vh; }
+
+#sheet-handle {
+width: 40px; height: 4px; border-radius: 2px;
+background: var(–border); margin: 10px auto 6px;
+flex-shrink: 0; cursor: pointer;
+}
+#sheet-title {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 10px; color: var(–orange);
+text-transform: uppercase; letter-spacing: 2px;
+padding: 0 16px 8px; flex-shrink: 0;
+border-bottom: 1px solid var(–border);
+}
+#sheet-content {
+flex: 1; overflow-y: auto;
+-webkit-overflow-scrolling: touch;
+padding: 12px 16px;
+}
+
+/* ── FIELD STYLES ────────────────────────────────── */
+.fgrp { display: flex; flex-direction: column; gap: 12px; }
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field label {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 9px; color: var(–dim);
+text-transform: uppercase; letter-spacing: 1px;
+}
+.field input, .field select {
+background: var(–bg) !important; border: 1px solid var(–border);
+color: var(–text) !important; font-family: ‘Inter’, sans-serif;
+font-size: 15px; padding: 10px 12px; border-radius: 5px;
+outline: none; width: 100%; -webkit-appearance: none;
+}
+.field input:focus, .field select:focus { border-color: var(–orange); }
+.field select option { background: var(–bg) !important; }
+
+.sws { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
+.sw {
+width: 26px; height: 26px; border-radius: 4px;
+border: 2px solid transparent; cursor: pointer;
+}
+.sw.on { border-color: #fff !important; }
+
+.togs { display: flex; gap: 8px; flex-wrap: wrap; }
+.tog {
+background: var(–bg) !important; border: 1px solid var(–border);
+color: var(–dim); font-family: ‘JetBrains Mono’, monospace;
+font-size: 11px; padding: 8px 14px; border-radius: 5px;
+cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
+}
+.tog.on { background: var(–orange) !important; border-color: var(–orange); color: #000 !important; font-weight: 700; }
+
+.fire-btn {
+background: #1a2a1a !important; border: 1px solid var(–green);
+color: var(–green); font-family: ‘Inter’, sans-serif;
+font-size: 14px; font-weight: 700; padding: 12px;
+border-radius: 6px; cursor: pointer; width: 100%;
+text-transform: uppercase; letter-spacing: 1px;
+}
+.fire-btn:active { background: var(–green) !important; color: #000; }
+
+/* ── SETTINGS PAGE ───────────────────────────────── */
+.ngrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.ptbl { width: 100%; border-collapse: collapse; }
+.ptbl th {
+font-family: ‘JetBrains Mono’, monospace; font-size: 9px; color: var(–dim);
+letter-spacing: 1px; text-transform: uppercase;
+padding: 4px 6px; text-align: left; border-bottom: 1px solid var(–border);
+}
+.ptbl td { padding: 4px 6px; border-bottom: 1px solid #16161e; }
+.ptbl input {
+background: var(–bg) !important; border: 1px solid var(–border);
+color: var(–text) !important; font-family: ‘Inter’, sans-serif;
+font-size: 13px; padding: 4px 6px; border-radius: 3px; width: 100%;
+}
+.ptbl input[type=checkbox] { width: auto; }
+.ptbl input:focus { border-color: var(–orange); outline: none; }
+
+.cprow { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid #16161e; }
+.cprow label { font-family: ‘JetBrains Mono’, monospace; font-size: 10px; color: var(–dim); width: 55px; flex-shrink: 0; }
+.cprow input { flex: 1; background: var(–bg) !important; border: 1px solid var(–border); color: var(–text) !important; font-family: ‘Inter’, sans-serif; font-size: 13px; padding: 6px 8px; border-radius: 3px; }
+
+/* ── STATUS PAGE ─────────────────────────────────── */
+.stat-card {
+background: var(–panel) !important;
+border: 1px solid var(–border); border-radius: 8px;
+padding: 16px; margin-bottom: 10px;
+display: flex; align-items: center; gap: 14px;
+}
+.stat-dot { width: 16px; height: 16px; border-radius: 50%; background: #333; flex-shrink: 0; }
+.stat-dot.ok   { background: var(–green); box-shadow: 0 0 10px var(–green); }
+.stat-dot.err  { background: var(–red);   box-shadow: 0 0 10px var(–red); animation: blink 1s infinite; }
+.stat-dot.warn { background: var(–orange);box-shadow: 0 0 10px var(–orange); }
+
+.stat-body { flex: 1; }
+.stat-name { font-size: 16px; font-weight: 700; color: var(–text); }
+.stat-val  { font-family: ‘JetBrains Mono’, monospace; font-size: 13px; color: var(–dim); margin-top: 2px; }
+
+.mode-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 10px; }
+.mode-card {
+background: var(–panel) !important;
+border: 1px solid var(–border); border-radius: 8px;
+padding: 14px 10px; text-align: center;
+transition: border-color .2s;
+}
+.mode-card.active { border-color: var(–orange); }
+.mode-card .mc-label { font-size: 11px; color: var(–dim); text-transform: uppercase; letter-spacing: 1px; }
+.mode-card .mc-val   { font-size: 18px; font-weight: 700; margin-top: 4px; }
+.mode-card.active .mc-val { color: var(–orange); }
+
+.log-box {
+background: var(–bg) !important;
+border: 1px solid var(–border); border-radius: 6px;
+padding: 10px; font-family: ‘JetBrains Mono’, monospace;
+font-size: 11px; color: var(–dim); line-height: 1.6;
+max-height: 200px; overflow-y: auto;
+-webkit-overflow-scrolling: touch;
+}
+
+::-webkit-scrollbar { width: 3px; height: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(–border); border-radius: 3px; }
+
+/* ── iPad landscape: side-by-side grid + editor ──── */
+@media (orientation: landscape) and (min-width: 768px) {
+#pages { display: flex; }
+.page#page-grid {
+display: flex !important;
+flex-direction: row;
+gap: 10px;
+padding: 10px;
+overflow: hidden;
+}
+#grid-area { flex: 1; overflow-y: auto; }
+#editor-sheet {
+position: relative;
+height: auto !important;
+width: 300px;
+border-radius: 6px;
+border: 1px solid var(–border);
+bottom: auto; left: auto; right: auto;
+flex-shrink: 0;
+align-self: flex-start;
+max-height: calc(100% - 0px);
+}
+#editor-sheet.open { height: auto; }
+#sheet-handle { display: none; }
+.page#page-settings,
+.page#page-status { display: none; }
+.page#page-settings.active,
+.page#page-status.active { display: block; }
+}
+</style>
+
+</head>
+<body>
+
+<div id="app">
+
+  <!-- STATUS BAR -->
+
+  <div id="sbar">
+    <div class="pill"><div class="dot" id="dEos"></div><span class="plbl">EOS </span><span class="pval" id="vEos">-</span></div>
+    <div class="pill"><div class="dot" id="dQlab"></div><span class="plbl">QLAB </span><span class="pval" id="vQlab">-</span></div>
+    <div class="pill"><div class="dot" id="dBridge"></div><span class="plbl">BRIDGE </span><span class="pval" id="vBridge">-</span></div>
+    <div class="pill chips">
+      <span class="chip sub on" id="cSub">SUB</span>
+      <span class="chip ml"     id="cML">ML</span>
+      <span class="chip color"  id="cColor">CLR</span>
+    </div>
+    <div class="sbar-btns">
+      <button class="hbtn grn" onclick="reloadBridge()">RELOAD</button>
+      <button class="hbtn sec" onclick="triggerLoad()">LOAD</button>
+      <button class="hbtn pri" onclick="saveFile()">SAVE</button>
+    </div>
+    <input type="file" id="fInput" accept=".json" style="display:none" onchange="onFile(event)">
+  </div>
+
+  <!-- PAGES -->
+
+  <div id="pages">
+
+```
+<!-- GRID PAGE -->
+<div class="page active" id="page-grid">
+  <div id="grid-area">
+    <div class="sec" style="margin-bottom:8px">
+      <div class="stitle">Button Grid — tap to fire / hold to edit</div>
+      <div class="gouter">
+        <div class="gmain">
+          <div id="gridRows"></div>
+          <div class="trow" id="tRow"></div>
+          <div class="rcol" id="rCol"></div>
+        </div>
+      </div>
+      <p id="autoNote" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);margin-top:6px"></p>
+    </div>
+  </div>
+
+  <!-- EDITOR SHEET (portrait: slide up / landscape: side panel) -->
+  <div id="editor-sheet">
+    <div id="sheet-handle" onclick="closeSheet()"></div>
+    <div id="sheet-title">Button Editor</div>
+    <div id="sheet-content">
+      <div style="color:var(--dim);font-family:'JetBrains Mono',monospace;font-size:12px;text-align:center;padding:20px 0">
+        Tap any button to edit
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS PAGE -->
+<div class="page" id="page-settings">
+  <div class="sec">
+    <div class="stitle">Network</div>
+    <div class="ngrid">
+      <div class="field"><label>Eos IP</label><input id="nEosIp"></div>
+      <div class="field"><label>Eos Port</label><input id="nEosPort" type="number" inputmode="numeric"></div>
+      <div class="field"><label>QLab IP</label><input id="nQlabIp"></div>
+      <div class="field"><label>QLab Port</label><input id="nQlabPort" type="number" inputmode="numeric"></div>
+      <div class="field"><label>Listen Port</label><input id="nListen" type="number" inputmode="numeric"></div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="stitle">ML Faders 1-5</div>
+    <table class="ptbl">
+      <thead><tr><th>#</th><th>Param</th><th>Switch</th><th>Min</th><th>Max</th></tr></thead>
+      <tbody id="mlBody"></tbody>
+    </table>
+  </div>
+  <div class="sec">
+    <div class="stitle">Colour Mode Faders 1-8</div>
+    <div id="cpList"></div>
+  </div>
+</div>
+
+<!-- STATUS PAGE -->
+<div class="page" id="page-status">
+  <div class="stat-card">
+    <div class="stat-dot" id="sd-eos"></div>
+    <div class="stat-body">
+      <div class="stat-name">ETC Eos / ETCnomad</div>
+      <div class="stat-val" id="sv-eos">Checking...</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-dot" id="sd-qlab"></div>
+    <div class="stat-body">
+      <div class="stat-name">QLab</div>
+      <div class="stat-val" id="sv-qlab">Checking...</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-dot" id="sd-bridge"></div>
+    <div class="stat-body">
+      <div class="stat-name">Python Bridge</div>
+      <div class="stat-val" id="sv-bridge">Checking...</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-dot" id="sd-apc"></div>
+    <div class="stat-body">
+      <div class="stat-name">APC mini mk2</div>
+      <div class="stat-val" id="sv-apc">Checking...</div>
+    </div>
+  </div>
+
+  <div class="mode-cards">
+    <div class="mode-card active" id="mc-sub">
+      <div class="mc-label">Fader Mode</div>
+      <div class="mc-val" id="mc-val">SUB</div>
+    </div>
+    <div class="mode-card" id="mc-file">
+      <div class="mc-label">Config File</div>
+      <div class="mc-val" style="font-size:13px" id="mc-file-val">—</div>
+    </div>
+    <div class="mode-card" id="mc-log">
+      <div class="mc-label">Last Event</div>
+      <div class="mc-val" style="font-size:12px" id="mc-log-val">—</div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="stitle">Recent Activity</div>
+    <div class="log-box" id="logBox">Waiting for events...</div>
+  </div>
+</div>
+```
+
+  </div>
+
+</div>
+
+<!-- BOTTOM TAB BAR -->
+
+<div id="tabbar">
+  <button class="tab active" id="tab-grid" onclick="showPage('grid')">
+    <span class="tab-icon">⊞</span>
+    <span class="tab-lbl">Grid</span>
+  </button>
+  <button class="tab" id="tab-settings" onclick="showPage('settings')">
+    <span class="tab-icon">⚙</span>
+    <span class="tab-lbl">Settings</span>
+  </button>
+  <button class="tab" id="tab-status" onclick="showPage('status')">
+    <span class="tab-icon">◉</span>
+    <span class="tab-lbl">Status</span>
+  </button>
+</div>
+
+<!-- FIRE TOAST -->
+
+<div class="toast" id="fire-toast"></div>
+
+<script>
+// ── Service Worker ────────────────────────────────
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(e => console.log('SW:', e));
+}
+
+// ── Palette ───────────────────────────────────────
+const APC={0:'#000',1:'#1E1E1E',2:'#7F7F7F',3:'#FFF',4:'#FF4C4C',5:'#FF0000',6:'#590000',7:'#190000',8:'#FFBD6C',9:'#FF5400',10:'#591D00',11:'#271B00',12:'#FFFF4C',13:'#FFFF00',14:'#595900',15:'#191900',16:'#88FF4C',17:'#54FF00',18:'#1D5900',19:'#142B00',20:'#4CFF4C',21:'#00FF00',22:'#005900',23:'#001900',24:'#4CFF5E',25:'#00FF19',26:'#00590D',27:'#001902',28:'#4CFF88',29:'#00FF55',30:'#00591D',31:'#001F12',32:'#4CFFB7',33:'#00FF99',34:'#005935',35:'#001912',36:'#4CC3FF',37:'#00A9FF',38:'#004152',39:'#001019',40:'#4C88FF',41:'#0055FF',42:'#001D59',43:'#000819',44:'#4C4CFF',45:'#0000FF',46:'#000059',47:'#000019',48:'#874CFF',49:'#5400FF',50:'#190064',51:'#0F0030',52:'#FF4CFF',53:'#FF00FF',54:'#590059',55:'#190019',56:'#FF4C87',57:'#FF0054',58:'#59001D',59:'#220013',60:'#FF1500',61:'#993500',62:'#795100',63:'#436400'};
+const PAL=[0,3,5,6,9,13,17,21,24,29,33,37,40,44,45,48,52,53,57,60];
+function hc(v){return APC[v]||'#222'}
+
+// ── State ─────────────────────────────────────────
+let cfg=null, selNote=null, selType=null, sheetOpen=false;
+const logLines=[];
+
+// ── Tab navigation ────────────────────────────────
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+  if (name !== 'grid') closeSheet();
+}
+
+// ── Sheet (editor panel) ──────────────────────────
+function openSheet() {
+  sheetOpen = true;
+  document.getElementById('editor-sheet').classList.add('open');
+}
+function closeSheet() {
+  sheetOpen = false;
+  document.getElementById('editor-sheet').classList.remove('open');
+  if (selNote !== null) {
+    const prev = document.getElementById((selType==='g'?'g':'r')+selNote);
+    if (prev) prev.classList.remove('sel');
+    selNote = null; selType = null;
+  }
+}
+
+// ── Status polling ────────────────────────────────
+function poll() {
+  fetch('http://127.0.0.1:9002/status', {signal: AbortSignal.timeout(1500)})
+    .then(r=>r.json()).then(d=>{
+      sd('dEos', d.eos_connected?'ok':'err');
+      sv('vEos', d.eos_connected?'OK':'OFFLINE');
+      sds('sd-eos', d.eos_connected?'ok':'err');
+      svs('sv-eos', d.eos_connected?'Connected':'Not responding');
+
+      sd('dQlab', d.qlab_reachable?'ok':'warn');
+      sv('vQlab', d.qlab_reachable?'OK':'CHECK');
+      sds('sd-qlab', d.qlab_reachable?'ok':'warn');
+      svs('sv-qlab', d.qlab_reachable?'Reachable':'Not reachable');
+
+      sd('dBridge','ok'); sv('vBridge','RUNNING');
+      sds('sd-bridge','ok'); svs('sv-bridge','Running on port 9002');
+
+      sds('sd-apc', d.apc_connected?'ok':'warn');
+      svs('sv-apc', d.apc_connected?'Connected':'Searching...');
+
+      ['cSub','cML','cColor'].forEach(id=>document.getElementById(id).classList.remove('on'));
+      const mc={submaster:'cSub',ml_encoder:'cML',color:'cColor'};
+      const mnames={submaster:'SUB',ml_encoder:'ML',color:'COLOR'};
+      if(mc[d.fader_mode]) document.getElementById(mc[d.fader_mode]).classList.add('on');
+      document.getElementById('mc-val').textContent = mnames[d.fader_mode]||'SUB';
+    }).catch(()=>{
+      sd('dBridge','err'); sv('vBridge','OFFLINE');
+      sds('sd-bridge','err'); svs('sv-bridge','Script not running');
+      sd('dEos',''); sv('vEos','-');
+      sd('dQlab',''); sv('vQlab','-');
+    });
+}
+function sd(id,cls){const e=document.getElementById(id);e.className='dot';if(cls)e.classList.add(cls);}
+function sv(id,t){document.getElementById(id).textContent=t;}
+function sds(id,cls){const e=document.getElementById(id);e.className='stat-dot';if(cls)e.classList.add(cls);}
+function svs(id,t){document.getElementById(id).textContent=t;}
+setInterval(poll,2000); poll();
+
+// ── OSC fire via bridge ───────────────────────────
+function fireOsc(osc, target, useVal) {
+  if (!osc) return;
+  const t0 = Date.now();
+  fetch('http://127.0.0.1:9002/fire', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({osc, target:target||'eos', use_val:useVal!==false})
+  }).then(()=>{
+    addLog((target==='qlab'?'[QLab] ':'[Eos] ') + osc);
+  }).catch(()=>{
+    showToast('Bridge offline', true);
+  });
+}
+
+function addLog(msg) {
+  logLines.unshift(new Date().toLocaleTimeString() + '  ' + msg);
+  if (logLines.length > 20) logLines.pop();
+  const box = document.getElementById('logBox');
+  if (box) box.textContent = logLines.join('\n');
+  document.getElementById('mc-log-val').textContent = msg.slice(0,20);
+}
+
+// ── Grid ──────────────────────────────────────────
+function gn(row,col){return(7-row)*8+col}
+
+function buildGrid() {
+  const rows=document.getElementById('gridRows');
+  rows.innerHTML='';
+  for(let r=0;r<8;r++){
+    const div=document.createElement('div');
+    div.className='grow';
+    for(let c=0;c<8;c++) div.appendChild(mkGBtn(gn(r,c)));
+    rows.appendChild(div);
+  }
+  const tr=document.getElementById('tRow');
+  tr.innerHTML='';
+  [0x64,0x65,0x66,0x67,0x68,0x69,0x6A,0x6B].forEach((n,i)=>{
+    const b=document.createElement('div');b.className='tbtn';
+    b.innerHTML='<span>'+['T1','T2','T3','T4','T5','T6','ML','CLR'][i]+'</span>';
+    tr.appendChild(b);
+  });
+  const rc=document.getElementById('rCol');
+  rc.innerHTML='';
+  [112,113,114,115,116,117,118,119].forEach(n=>rc.appendChild(mkRBtn(n)));
+}
+
+// Press handler - each button its own closure
+// SHORT tap = fire OSC, LONG press (600ms) = open editor
+function addPress(el, onShort, onLong) {
+  var timer=null, fired=false;
+  function start() {
+    fired=false;
+    if(timer) clearTimeout(timer);
+    timer=setTimeout(function(){ fired=true; timer=null; onLong(); }, 600);
+  }
+  function end() {
+    if(timer){ clearTimeout(timer); timer=null; }
+    if(!fired) onShort();
+    fired=false;
+  }
+  function cancel() { if(timer){ clearTimeout(timer); timer=null; } fired=false; }
+  el.addEventListener('mousedown', start);
+  el.addEventListener('mouseup', end);
+  el.addEventListener('touchstart', function(e){ e.preventDefault(); start(); }, {passive:false});
+  el.addEventListener('touchend',   function(e){ e.preventDefault(); end();   }, {passive:false});
+  el.addEventListener('touchcancel', cancel);
+  el.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+}
+
+function mkGBtn(note) {
+  const b=document.createElement('div');
+  b.className='gbtn'; b.id='g'+note;
+  rfrG(b,note);
+  addPress(b,
+    function(){ fireBtn(note,'g'); },
+    function(){ selBtn(note,'g'); }
+  );
+  return b;
+}
+
+function mkRBtn(note) {
+  const b=document.createElement('div');
+  b.className='rbtn'; b.id='r'+note;
+  rfrR(b,note);
+  addPress(b,
+    function(){ fireBtn(note,'r'); },
+    function(){ selBtn(note,'r'); }
+  );
+  return b;
+}
+
+function fireBtn(note, type) {
+  let osc=null, target='eos', useVal=true;
+  if(type==='g' && cfg && cfg.grid_buttons[String(note)]) {
+    const d=cfg.grid_buttons[String(note)];
+    osc=d.osc; target=d.target||'eos'; useVal=d.use_val!==false;
+  } else if(type==='r' && cfg && cfg.right_column[String(note)]) {
+    const d=cfg.right_column[String(note)];
+    osc=d.osc; useVal=d.use_val!==false;
+  }
+  if(!osc){showToast('No OSC on this button',true);return;}
+  const el=document.getElementById((type==='g'?'g':'r')+note);
+  if(el){el.classList.add('fired');setTimeout(()=>el.classList.remove('fired'),250);}
+  fireOsc(osc, target, useVal);
+  showToast(osc);
+}
+
+function selBtn(note, type) {
+  if(selNote!==null){
+    const p=document.getElementById((selType==='g'?'g':'r')+selNote);
+    if(p)p.classList.remove('sel');
+  }
+  selNote=note; selType=type;
+  const el=document.getElementById((type==='g'?'g':'r')+note);
+  if(el)el.classList.add('sel');
+  type==='g'?renderG(note):renderR(note);
+  openSheet();
+  showPage('grid');
+}
+
+function rfrG(b,note){
+  const d=cfg?(cfg.grid_buttons[String(note)]||{}):{};
+  const lbl=d.label||''; const v=d.color||0;
+  const bg=hc(v); const off=v===0;
+  b.style.background=off?'#14141c':bg+'25';
+  b.style.borderColor=off?'#2a2a38':bg+'99';
+  b.innerHTML='<span class="gnote">'+note+'</span><span class="glabel" style="color:'+(off?'#444':'#fff')+'">'+lbl+'</span><span class="gdot" style="background:'+bg+'"></span>';
+  b.classList.toggle('sel', selNote===note&&selType==='g');
+}
+function rfrR(b,note){
+  const d=cfg?(cfg.right_column[String(note)]||{}):{};
+  b.innerHTML='<span class="gnote">'+note+'</span><span class="glabel">'+(d.label||'')+'</span>';
+  b.classList.toggle('sel', selNote===note&&selType==='r');
+}
+
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;');}
+
+function renderG(note){
+  if(!cfg)return;
+  const d=cfg.grid_buttons[String(note)]||{};
+  const v=d.color||0, grp=d.group||'command', tgt=d.target||'eos', uv=d.use_val!==false;
+  const gOpts=['go','command','numeric','destructive','shift'].map(g=>'<option value="'+g+'" '+(grp===g?'selected':'')+'>'+g+'</option>').join('');
+  const tOpts=['eos','qlab'].map(t=>'<option value="'+t+'" '+(tgt===t?'selected':'')+'>'+t+'</option>').join('');
+  document.getElementById('sheet-title').textContent='NOTE '+note+'  R'+(8-Math.floor(note/8))+' C'+((note%8)+1);
+  document.getElementById('sheet-content').innerHTML='<div class="fgrp"><button class="fire-btn" onclick="fireBtn('+note+',\'g\')">▶ FIRE</button><div class="field"><label>Label</label><input value="'+esc(d.label||'')+'" oninput="ug('+note+',\'label\',this.value)"></div><div class="field"><label>OSC Command</label><input value="'+esc(d.osc||'')+'" placeholder="/eos/key/..." oninput="ug('+note+',\'osc\',this.value)"></div><div class="field"><label>Target</label><select onchange="ug('+note+',\'target\',this.value)">'+tOpts+'</select></div><div class="field"><label>Group</label><select onchange="ug('+note+',\'group\',this.value)">'+gOpts+'</select></div><div class="field"><label>Trigger</label><div class="togs"><div class="tog '+(uv?'on':'')+'" onclick="tuv('+note+',true)">Send 1/0</div><div class="tog '+(!uv?'on':'')+'" onclick="tuv('+note+',false)">Send []</div></div></div><div class="field"><label>LED Colour</label><div class="sws">'+PAL.map(p=>'<div class="sw '+(v===p?'on':'')+'" style="background:'+hc(p)+'" onclick="sc('+note+','+p+')"></div>').join('')+'</div><div style="display:flex;align-items:center;gap:8px;margin-top:6px"><span style="font-family:JetBrains Mono,monospace;font-size:10px;color:var(--dim)">Custom vel:</span><input type="number" min="0" max="127" value="'+v+'" style="width:70px;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:4px 6px;border-radius:3px;font-size:13px" onchange="sc('+note+',parseInt(this.value)||0)"><span style="width:18px;height:18px;border-radius:3px;background:'+hc(v)+';display:inline-block;border:1px solid #333"></span></div></div></div>';
+}
+
+function renderR(note){
+  if(!cfg)return;
+  const d=cfg.right_column[String(note)]||{};
+  const uv=d.use_val!==false;
+  document.getElementById('sheet-title').textContent='RIGHT COL  '+note+'  '+d.label;
+  document.getElementById('sheet-content').innerHTML='<div class="fgrp"><button class="fire-btn" onclick="fireBtn('+note+',\'r\')">▶ FIRE</button><div class="field"><label>Label</label><input value="'+esc(d.label||'')+'" oninput="ur('+note+',\'label\',this.value)"></div><div class="field"><label>OSC Command</label><input value="'+esc(d.osc||'')+'" placeholder="/eos/key/..." oninput="ur('+note+',\'osc\',this.value)"></div><div class="field"><label>Trigger</label><div class="togs"><div class="tog '+(uv?'on':'')+'" onclick="turv('+note+',true)">Send 1/0</div><div class="tog '+(!uv?'on':'')+'" onclick="turv('+note+',false)">Send []</div></div></div></div>';
+}
+
+function ug(note,f,v){
+  if(!cfg)return;
+  if(!cfg.grid_buttons[String(note)])cfg.grid_buttons[String(note)]={};
+  cfg.grid_buttons[String(note)][f]=v;
+  const b=document.getElementById('g'+note); if(b)rfrG(b,note);
+}
+function ur(note,f,v){
+  if(!cfg)return;
+  if(!cfg.right_column[String(note)])cfg.right_column[String(note)]={};
+  cfg.right_column[String(note)][f]=v;
+  const b=document.getElementById('r'+note); if(b)rfrR(b,note);
+}
+function tuv(note,v){ug(note,'use_val',v);renderG(note);}
+function turv(note,v){ur(note,'use_val',v);renderR(note);}
+function sc(note,v){ug(note,'color',v);renderG(note);}
+
+// ── Network ───────────────────────────────────────
+function bindNet(){
+  if(!cfg)return;
+  const n=cfg.network||{};
+  document.getElementById('nEosIp').value=n.eos_ip||'';
+  document.getElementById('nEosPort').value=n.eos_osc_port||'';
+  document.getElementById('nQlabIp').value=n.qlab_ip||'';
+  document.getElementById('nQlabPort').value=n.qlab_osc_port||'';
+  document.getElementById('nListen').value=n.listen_port||'';
+  ['nEosIp','nEosPort','nQlabIp','nQlabPort','nListen'].forEach(id=>
+    document.getElementById(id).addEventListener('change',syncNet));
+}
+function syncNet(){
+  if(!cfg)return;
+  cfg.network.eos_ip=document.getElementById('nEosIp').value;
+  cfg.network.eos_osc_port=parseInt(document.getElementById('nEosPort').value);
+  cfg.network.qlab_ip=document.getElementById('nQlabIp').value;
+  cfg.network.qlab_osc_port=parseInt(document.getElementById('nQlabPort').value);
+  cfg.network.listen_port=parseInt(document.getElementById('nListen').value);
+}
+
+// ── ML / Colour params ────────────────────────────
+function buildML(){
+  if(!cfg)return;
+  const body=document.getElementById('mlBody'); body.innerHTML='';
+  for(let i=0;i<5;i++){
+    const p=cfg.ml_params[String(i)]||{};
+    const tr=document.createElement('tr');
+    tr.innerHTML='<td style="font-family:JetBrains Mono,monospace;font-size:11px;color:var(--dim)">F'+(i+1)+'</td><td><input value="'+(p.name||'')+'" onchange="uml('+i+',\'name\',this.value)"></td><td style="text-align:center"><input type="checkbox" '+(p.is_switch?'checked':'')+' onchange="uml('+i+',\'is_switch\',this.checked)"></td><td><input value="'+(p.min!=null?p.min:'')+'" placeholder="0" onchange="uml('+i+',\'min\',parseFloat(this.value))"></td><td><input value="'+(p.max!=null?p.max:'')+'" placeholder="100" onchange="uml('+i+',\'max\',parseFloat(this.value))"></td>';
+    body.appendChild(tr);
+  }
+}
+function uml(i,f,v){if(!cfg)return;if(!cfg.ml_params[String(i)])cfg.ml_params[String(i)]={};cfg.ml_params[String(i)][f]=v;}
+function buildCP(){
+  if(!cfg)return;
+  const el=document.getElementById('cpList'); el.innerHTML='';
+  for(let i=0;i<8;i++){
+    const v=cfg.color_params[String(i)]||'';
+    const row=document.createElement('div'); row.className='cprow';
+    row.innerHTML='<label>F'+(i+1)+'</label><input value="'+v+'" placeholder="e.g. red, hue" onchange="ucp('+i+',this.value)">';
+    el.appendChild(row);
+  }
+}
+function ucp(i,v){if(!cfg)return;cfg.color_params[String(i)]=v||null;}
+
+// ── File I/O ──────────────────────────────────────
+function triggerLoad(){document.getElementById('fInput').click();}
+function onFile(event){
+  const file=event.target.files[0]; if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      cfg=JSON.parse(e.target.result);
+      localStorage.setItem('lastCfgName',file.name);
+      buildGrid(); bindNet(); buildML(); buildCP();
+      document.getElementById('autoNote').textContent='';
+      document.getElementById('mc-file-val').textContent=file.name.replace('.json','');
+      showToast('Loaded: '+file.name);
+    }catch(err){showToast('Bad JSON',true);}
+  };
+  reader.readAsText(file); event.target.value='';
+}
+function saveFile(){
+  if(!cfg){showToast('No config loaded',true);return;}
+  syncNet();
+  const blob=new Blob([JSON.stringify(cfg,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='eos_apc_config.json'; a.click();
+  showToast('Saved - run updateconfig then RELOAD');
+}
+function reloadBridge(){
+  if(!confirm('Reload bridge? APC restarts in ~5 seconds.'))return;
+  fetch('http://127.0.0.1:9002/reload',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'})
+    .then(()=>showToast('Bridge reloading...'))
+    .catch(()=>showToast('Bridge offline',true));
+}
+
+let toastTimer=null;
+function showToast(msg,err=false){
+  const t=document.getElementById('fire-toast');
+  t.textContent=msg; t.className='toast'+(err?' err':'')+' show';
+  if(toastTimer)clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>{t.className='toast'+(err?' err':'');},2500);
+}
+
+// ── Init ──────────────────────────────────────────
+buildGrid();
+const last=localStorage.getItem('lastCfgName');
+if(last){
+  document.getElementById('autoNote').textContent='Last: '+last+' - tap LOAD to reload';
+  document.getElementById('mc-file-val').textContent=last.replace('.json','');
+}
+</script>
+
+</body>
+</html>
