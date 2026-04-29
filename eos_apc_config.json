@@ -1,0 +1,607 @@
+{
+  "network": {
+    "eos_ip": "2.0.0.1",
+    "eos_osc_port": 8000,
+    "qlab_ip": "2.0.0.2",
+    "qlab_osc_port": 53000,
+    "listen_port": 9001
+  },
+  "grid_buttons": {
+    "0": {
+      "label": "Effect",
+      "osc": "/eos/key/effect",
+      "target": "eos",
+      "color": 37,
+      "use_val": true,
+      "group": "command"
+    },
+    "1": {
+      "label": "Delay",
+      "osc": "/eos/key/delay",
+      "target": "eos",
+      "color": 6,
+      "use_val": true,
+      "group": "command"
+    },
+    "2": {
+      "label": "-%",
+      "osc": "/eos/key/-%",
+      "target": "eos",
+      "color": 3,
+      "use_val": true,
+      "group": "numeric"
+    },
+    "3": {
+      "label": "Clear",
+      "osc": "/eos/key/clear_cmd",
+      "target": "eos",
+      "color": 6,
+      "use_val": true,
+      "group": "destructive"
+    },
+    "4": {
+      "label": "0",
+      "osc": "/eos/key/0",
+      "target": "eos",
+      "color": 3,
+      "use_val": true,
+      "group": "numeric"
+    },
+    "5": {
+      "label": ".",
+      "osc": "/eos/key/.",
+      "target": "eos",
+      "color": 3,
+      "use_val": true,
+      "group": "numeric"
+    },
+    "6": {
+      "label": "At",
+      "osc": "/eos/key/at",
+      "target": "eos",
+      "color": 9,
+      "use_val": true,
+      "group": "command"
+    },
+    "7": {
+      "label": "Enter",
+      "osc": "/eos/key/enter",
+      "target": "eos",
+      "color": 21,
+      "use_val": true,
+      "group": "command"
+    },
+    "8": {
+      "label": "Preset",
+      "osc": "/eos/key/preset",
+      "target": "eos",
+      "color": 37,
+      "use_val": true,
+      "group": "command"
+    },
+    "9": {
+      "label": "Time",
+      "osc": "/eos/key/time",
+      "target": "eos",
+      "color": 6,
+      "use_val": true,
+      "group": "command"
+    },
+    "10": {
+      "label": "+%",
+      "osc": "/eos/key/+%",
+      "target": "eos",
+      "color": 3,
+      "use_val": true,
+      "group": "numeric"
+    },
+    "11": {
+      "label": "1",
+      "osc": "/eos/key/1",
+      "target": "eos",
+      "color": 3,
+      "use_val": true,
+      "group": "numeric"
+    },
+    "12": {
+      "label": "2",
+      "osc": "/eos/key/2",
+      "target": "eos",
+      "color": 3,
+      "use_val": true,
+      "group": "numeric"
+    },
+    "13": {
+      "label": "3",
+      "osc": "/eos/key/3",
+      "target": "eos",
+      "color": 3,
+      "use_val": true,
+      "group": "numeric"
+    },
+    "14": {
+      "label": "Full",
+      "osc": "/eos/key/full",
+      "target": "eos",
+      "color": 9,
+      "use_val": true,
+      "group": "command"
+    },
+    "15": {
+      "label": "Qonly/Track",
+      "osc": "/eos/key/cueonlytrack",
+      "target": "eos",
+      "color": 37,
+      "use_val": true,
+      "group": "command"
+    },
+    "16": {
+      "label": "Beam Pal",
+      "osc": "/eos/key/beam_palette",
+      "target": "eos",
+      "color": 37,
+      "use_val": true,
+      "group": "command"
+    },
+    "17": {
+      "label": "Record Only",
+      "osc": "/eos/key/record_only",
+      "target": "eos",
+      "color": 6,
+      "use_val": true,
+      "group": "command"
+    },
+    "18": {
+      "label": "Part",
+      "osc": "/eos/key/part",
+      "target": "eos",
+      "color": 9,
+      "use_val": true,
+      "group": "command"
+    },
+    "19": {
+      "label": "4",
+      "osc": "/eos/key/4",
+      "target": "eos",
+      "color": 3,
+      "use_val": true,
+      "group": "numeric"
+    },
+    "20": {
+      "label": "5",
+      "osc": "/eos/key/5",
+      "target": "eos",
+      "color": 3,
+      "use_val": true,
+      "group": "numeric"
+    },
+    "21": {
+      "label": "6",
+      "osc": "/eos/key/6",
+      "target": "eos",
+      "color": 3,
+      "use_val": true,
+      "group": "numeric"
+    },
+    "22": {
+      "label": "Out",
+      "osc": "/eos/key/out",
+      "target": "eos",
+      "color": 9,
+      "use_val": true,
+      "group": "command"
+    },
+    "23": {
+      "label": "Select Active",
+      "osc": "/eos/key/select_active",
+      "target": "eos",
+      "color": 37,
+      "use_val": true,
+      "group": "command"
+    },
+    "24": {
+      "label": "Colour Pal",
+      "osc": "/eos/key/color_palette",
+      "target": "eos",
+      "color": 37,
+      "use_val": true,
+      "group": "command"
+    },
+    "25": {
+      "label": "Update",
+      "osc": "/eos/key/update",
+      "target": "eos",
+      "color": 6,
+      "use_val": true,
+      "group": "command"
+    },
+    "26": {
+      "label": "Group",
+      "osc": "/eos/key/group",
+      "target": "eos",
+      "color": 9,
+      "use_val": true,
+      "group": "command"
+    },
+    "27": {
+      "label": "7",
+      "osc": "/eos/key/7",
+      "target": "eos",
+      "color": 3,
+      "use_val": true,
+      "group": "numeric"
+    },
+    "28": {
+      "label": "8",
+      "osc": "/eos/key/8",
+      "target": "eos",
+      "color": 3,
+      "use_val": true,
+      "group": "numeric"
+    },
+    "29": {
+      "label": "9",
+      "osc": "/eos/key/9",
+      "target": "eos",
+      "color": 3,
+      "use_val": true,
+      "group": "numeric"
+    },
+    "30": {
+      "label": "Rem-Dim",
+      "osc": "/eos/key/rem_dim",
+      "target": "eos",
+      "color": 9,
+      "use_val": true,
+      "group": "command"
+    },
+    "31": {
+      "label": "Select Last",
+      "osc": "/eos/key/select_last",
+      "target": "eos",
+      "color": 37,
+      "use_val": true,
+      "group": "command"
+    },
+    "32": {
+      "label": "Focus Pal",
+      "osc": "/eos/key/focus_palette",
+      "target": "eos",
+      "color": 37,
+      "use_val": true,
+      "group": "command"
+    },
+    "33": {
+      "label": "Record",
+      "osc": "/eos/key/record",
+      "target": "eos",
+      "color": 6,
+      "use_val": true,
+      "group": "command"
+    },
+    "34": {
+      "label": "Sub",
+      "osc": "/eos/key/sub",
+      "target": "eos",
+      "color": 9,
+      "use_val": true,
+      "group": "command"
+    },
+    "35": {
+      "label": "+",
+      "osc": "/eos/key/+",
+      "target": "eos",
+      "color": 3,
+      "use_val": true,
+      "group": "numeric"
+    },
+    "36": {
+      "label": "Thru",
+      "osc": "/eos/key/thru",
+      "target": "eos",
+      "color": 3,
+      "use_val": true,
+      "group": "numeric"
+    },
+    "37": {
+      "label": "-",
+      "osc": "/eos/key/-",
+      "target": "eos",
+      "color": 3,
+      "use_val": true,
+      "group": "numeric"
+    },
+    "38": {
+      "label": "/",
+      "osc": "/eos/key/\\",
+      "target": "eos",
+      "color": 3,
+      "use_val": true,
+      "group": "numeric"
+    },
+    "39": {
+      "label": "Tab",
+      "osc": "/eos/key/tab",
+      "target": "eos",
+      "color": 37,
+      "use_val": true,
+      "group": "command"
+    },
+    "40": {
+      "label": "Intensity Pal",
+      "osc": "/eos/key/intensity_palette",
+      "target": "eos",
+      "color": 37,
+      "use_val": true,
+      "group": "command"
+    },
+    "41": {
+      "label": "Delete",
+      "osc": "/eos/key/delete",
+      "target": "eos",
+      "color": 6,
+      "use_val": true,
+      "group": "destructive"
+    },
+    "42": {
+      "label": "Cue",
+      "osc": "/eos/key/cue",
+      "target": "eos",
+      "color": 9,
+      "use_val": true,
+      "group": "command"
+    },
+    "43": {
+      "label": "Go To Cue",
+      "osc": "/eos/key/go_to_cue",
+      "target": "eos",
+      "color": 21,
+      "use_val": true,
+      "group": "command"
+    },
+    "44": {
+      "label": "Block",
+      "osc": "/eos/key/block",
+      "target": "eos",
+      "color": 9,
+      "use_val": true,
+      "group": "command"
+    },
+    "45": {
+      "label": "Assert",
+      "osc": "/eos/key/assert",
+      "target": "eos",
+      "color": 9,
+      "use_val": true,
+      "group": "command"
+    },
+    "46": {
+      "label": "Undo",
+      "osc": "/eos/key/undo",
+      "target": "eos",
+      "color": 9,
+      "use_val": true,
+      "group": "command"
+    },
+    "47": {
+      "label": "Trace",
+      "osc": "/eos/key/trace",
+      "target": "eos",
+      "color": 37,
+      "use_val": true,
+      "group": "command"
+    },
+    "48": {
+      "label": "Copy To",
+      "osc": "/eos/key/copy_to",
+      "target": "eos",
+      "color": 37,
+      "use_val": true,
+      "group": "command"
+    },
+    "49": {
+      "label": "Recall From",
+      "osc": "/eos/key/recall_from",
+      "target": "eos",
+      "color": 37,
+      "use_val": true,
+      "group": "command"
+    },
+    "50": {
+      "label": "Label",
+      "osc": "/eos/key/label",
+      "target": "eos",
+      "color": 37,
+      "use_val": true,
+      "group": "command"
+    },
+    "51": {
+      "label": "Mark",
+      "osc": "/eos/key/mark",
+      "target": "eos",
+      "color": 37,
+      "use_val": true,
+      "group": "command"
+    },
+    "52": {
+      "label": "Park",
+      "osc": "/eos/key/park",
+      "target": "eos",
+      "color": 37,
+      "use_val": true,
+      "group": "command"
+    },
+    "53": {
+      "label": "Sneak",
+      "osc": "/eos/key/sneak",
+      "target": "eos",
+      "color": 37,
+      "use_val": true,
+      "group": "command"
+    },
+    "54": {
+      "label": "Home",
+      "osc": "/eos/key/home",
+      "target": "eos",
+      "color": 37,
+      "use_val": true,
+      "group": "command"
+    },
+    "55": {
+      "label": "Shift",
+      "osc": null,
+      "target": null,
+      "color": 3,
+      "use_val": false,
+      "group": "shift"
+    },
+    "56": {
+      "label": "GO",
+      "osc": "/eos/key/go_0",
+      "target": "eos",
+      "color": 17,
+      "use_val": true,
+      "group": "go"
+    },
+    "57": {
+      "label": "Stop",
+      "osc": "/eos/key/stop",
+      "target": "eos",
+      "color": 5,
+      "use_val": true,
+      "group": "destructive"
+    },
+    "58": {
+      "label": "Add/Patch",
+      "osc": "/eos/key/patch",
+      "target": "eos",
+      "color": 37,
+      "use_val": true,
+      "group": "command"
+    },
+    "59": {
+      "label": "ML Cntrl",
+      "osc": "/eos/key/open_ml_controls",
+      "target": "eos",
+      "color": 37,
+      "use_val": true,
+      "group": "command"
+    },
+    "60": {
+      "label": "S1",
+      "osc": "/eos/key/softkey_1",
+      "target": "eos",
+      "color": 37,
+      "use_val": true,
+      "group": "command"
+    },
+    "61": {
+      "label": "S2",
+      "osc": "/eos/key/softkey_2",
+      "target": "eos",
+      "color": 37,
+      "use_val": true,
+      "group": "command"
+    },
+    "62": {
+      "label": "S3",
+      "osc": "/eos/key/softkey_3",
+      "target": "eos",
+      "color": 37,
+      "use_val": true,
+      "group": "command"
+    },
+    "63": {
+      "label": "S4",
+      "osc": "/eos/key/softkey_4",
+      "target": "eos",
+      "color": 37,
+      "use_val": true,
+      "group": "command"
+    }
+  },
+  "right_column": {
+    "112": {
+      "label": "Live",
+      "osc": "/eos/key/live",
+      "use_val": true
+    },
+    "113": {
+      "label": "Blind",
+      "osc": "/eos/key/blind",
+      "use_val": true
+    },
+    "114": {
+      "label": "Format",
+      "osc": "/eos/key/format",
+      "use_val": true
+    },
+    "115": {
+      "label": "Channel",
+      "osc": "/eos/key/chan",
+      "use_val": true
+    },
+    "116": {
+      "label": "Fixture",
+      "osc": "/eos/key/fixture",
+      "use_val": false
+    },
+    "117": {
+      "label": "Next",
+      "osc": "/eos/key/next",
+      "use_val": true
+    },
+    "118": {
+      "label": "Prev",
+      "osc": "/eos/key/last",
+      "use_val": true
+    },
+    "119": {
+      "label": "Flexi",
+      "osc": "/eos/key/flexichannel_mode",
+      "use_val": false
+    }
+  },
+  "ml_params": {
+    "0": {
+      "name": "intens",
+      "is_switch": false,
+      "min": 0,
+      "max": 100
+    },
+    "1": {
+      "name": "pan",
+      "is_switch": true,
+      "min": null,
+      "max": null
+    },
+    "2": {
+      "name": "tilt",
+      "is_switch": true,
+      "min": null,
+      "max": null
+    },
+    "3": {
+      "name": "zoom",
+      "is_switch": false,
+      "min": 0,
+      "max": 100
+    },
+    "4": {
+      "name": "edge",
+      "is_switch": false,
+      "min": 0,
+      "max": 100
+    }
+  },
+  "color_params": {
+    "0": "red",
+    "1": "lime",
+    "2": "green",
+    "3": "blue",
+    "4": "hue",
+    "5": "saturation",
+    "6": null,
+    "7": null
+  }
+}
